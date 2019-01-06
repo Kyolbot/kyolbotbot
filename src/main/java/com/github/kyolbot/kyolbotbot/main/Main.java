@@ -13,15 +13,23 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            // Set a shutdown hook to run any saving if we need it.
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                //client.logout();
+                logger.info("Goodbye!");
+            }));
+
+            // Build client
             String token = Utilities.getToken();
             if (token == null || token.isEmpty()) throw new IllegalStateException("No bot token configured!");
             client = Utilities.getBotClient(token);
             if (client == null) throw new IllegalStateException("Client couldn't be created.");
 
-
+            // Load the event listener and register it
             EventDispatcher dispatcher = client.getDispatcher();
             dispatcher.registerListener(new AnnotationListener());
 
+            // Log in.
             client.login();
         } catch (Exception e) {
             logger.error("Exception occurred during initialization: ", e);
